@@ -1,0 +1,47 @@
+---
+title: "just geojson explore"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(jsonlite)
+library(geojsonsf)
+```
+
+```{r}
+my_gjson <- geojsonsf::geojson_sf("https://api.weather.gov/points/38.8894,-77.0352") 
+my_gjson |> 
+  str()
+```
+
+Get JSON data and flatten it.
+
+```{r}
+#| warning: false
+#| message: false
+#| echo: false
+# for_where_df <- geojson_sf("https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us")
+# 
+# for_where_df
+
+my_local_weather_dump <- fromJSON("https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us", flatten = TRUE)  #  flatten = TRUE
+my_local_weather_df <- my_local_weather_dump$properties$periods |> 
+  janitor::clean_names()
+my_local_weather_df
+```
+
+```{r}
+#| warning: false
+my_local_weather_df <- my_local_weather_df |> 
+  mutate(start_time = ymd_hms(start_time, tz = "America/New_York"))
+  # mutate(foo = parse_date(start_time, format = "%Y/%m/%d %H:%M %z"), .after = start_time)
+my_local_weather_df 
+  
+
+```
+
+```{r}
+my_local_weather_df
+```

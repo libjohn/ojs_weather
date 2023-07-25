@@ -1,0 +1,119 @@
+---
+title: "weather_fromJSONapi"
+format: html
+---
+
+FAQ
+
+-   https://weather-gov.github.io/api/general-faqs
+
+-   https://weather-gov.github.io/api/gridpoints
+
+-   https://github.com/weather-gov/api
+
+Once you know the latitude and longitude, it's an easy three-step process from there. You can follow along in your browser with the links below:
+
+1.  Retrieve the metadata for your location from https://api.weather.gov/points/{lat},{lon}.
+    -   For our example the URL will be https://api.weather.gov/points/38.8894,-77.0352
+2.  You'll get back a JSON document. Inside the document, find the properties object, and inside that, find the forecast property. You'll find another URL there.
+    -   For our example this gives us https://api.weather.gov/gridpoints/LWX/96,70/forecast You can also get the hour-by-hour forecast from the forecastHourly property.
+    -   For our example it's https://api.weather.gov/gridpoints/LWX/96,70/forecast/hourly
+3.  Retrieve that URL. You'll get a JSON document containing the forecast for that location. There you go!
+
+## Fetch weather data
+
+based on defined location and weather.gov API returning JSON data
+
+```{ojs}
+
+
+// my_json <- fromJSON("https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us")  
+
+url_drm = https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us
+url_othr = https://api.weather.gov/gridpoints/GRB/68,20/forecast/hourly?units=us
+
+my_js_df = aq.fromJSON(await fetch('https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us').then(res => res.json()), { autoType: false })
+my_js_df.view()
+```
+
+```{ojs}
+mygjn = aq.fromJSON(await fetch('https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us').then(res => res.json()))
+
+mygjn.view()
+mygjn.columns()
+
+mygjn.get('properties.periods').view()
+
+my_local_weather_df = mygjn.properties.periods
+// my_local_weather_df = mygjn.properties
+my_local_weather_df
+
+
+
+
+// periods = mygjn.properties.map(p => p.periods)
+// flattenedPeriods = Array.prototype.concat.apply([], periods)
+// 
+// // Create arquero table from the flattened periods list
+// periodsTable = aq.fromValues(flattenedPeriods)
+
+//periods = mygjn.propterties.periods
+//periods
+
+//mygjnb = aq.fromJS([{
+//  periods: periods
+// }]);
+// 
+// 
+// my_local_weather_df = mygjnb.derive({periods: d => aq.flatten(d.periods)});
+// 
+// my_local_weather_df.view();
+// 
+// my_df = from(periods)
+// my_df.view()
+```
+
+```{ojs}
+woot = aq.fromJSON(`{
+  "schema":{"fields":[{"name":"a"},{"name":"b"}]},
+  "data":{"a":[1,3],"b":[2,4]}
+}`)
+
+woot.view()
+
+woot.columns()
+
+woot.shape()
+```
+
+
+foo
+
+```{ojs}
+my_js_df.shape
+```
+
+```{ojs}
+my_js_df.columns()
+```
+
+```{ojs}
+//my_js_df['temperature'].view()
+// my_js_df['properties']['data']['periods'].view()
+//my_js_df['properties'].columns()
+
+my_js_df['properties']
+my_js_df['properties'].has_values()
+my_js_df['properties'].notnull()
+my_js_df['properties'].head(1)
+```
+
+## Import arquero libraries
+
+```{ojs}
+import { aq, op } from '@uwdata/arquero'
+import { fromGeoJSON } from '@aris-data/arquero'
+
+// import {d3-time-format}
+// d3 = require("d3@6")
+```

@@ -1,0 +1,177 @@
+---
+title: "02_json_arquero_ojs_explore"
+format: html
+editor: visual
+---
+
+```{ojs}
+url_drm = 'https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us'
+url_othr = 'https://api.weather.gov/gridpoints/GRB/68,20/forecast/hourly?units=us'
+
+// my_js_df = aq.fromJSON(await fetch('https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us').then(res => res.json()), { autoType: false })
+my_js_df = aq.fromJSON(await fetch(url_drm).then(res => res.json()), { autoType: false })
+
+my_js_df.view()
+
+
+
+// properties = my_js_df.properties
+// properties.view()
+```
+
+
+### Using the d3.json method
+
+Heat Index
+https://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml
+
+HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - .22475541 * T * RH - .00683783 * T * T - .05481717 * RH * RH + .00122874 * T * T * RH + .00085282 * T * RH * RH - .00000199 * T * T * RH * RH
+
+
+```{ojs}
+foo = await d3.json(url_drm) // 'https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us')
+
+foo_periods = foo.properties.periods
+
+// foo_periods[0]
+
+aq.from(foo_periods).view()
+
+temp_df = aq.from(foo_periods)
+
+my_df = temp_df
+  .derive({  startTime: d =>  op.parse_date(d.startTime) })
+  
+my_dew_df = my_df
+  .derive({
+    dewpoint_F: (d) => d.dewpoint.value
+  })
+  .derive({
+    dewpoint_F: d => (d.dewpoint_F * (9 / 5) + 32)
+  })
+  .derive({
+    humidity_rel: d => d.relativeHumidity.value
+  })
+  .derive({
+    heat_index: d => -42.379 + 
+    (2.04901523 * d.temperature) + 
+    (10.14333127 * d.humidity_rel) -
+    (.22475541 * d.temperature * d.humidity_rel) - 
+    (.00683783 * d.temperature * d.temperature) - 
+    (.05481717 * d.humidity_rel * d.humidity_rel) + 
+    (.00122874 * d.temperature * d.temperature * d.humidity_rel) + 
+    (.00085282 * d.temperature * d.humidity_rel * d.humidity_rel) - 
+    (.00000199 * d.temperature * d.temperature * d.humidity_rel * d.humidity_rel)
+  })
+  .derive({
+    heat_index: d => op.round(d.heat_index, 0)
+  })
+  .derive({
+    rain_probability: d => d.probabilityOfPrecipitation.value
+  })
+
+
+// HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - .22475541 * T * RH - .00683783 * T * T - .05481717 * RH * RH + .00122874 * T * T * RH + .00085282 * T * RH * RH - .00000199 * T * T * RH * RH
+  
+await my_dew_df.view()
+
+// dewpoint = foo.properties.periods.dewpoint
+// dewpoint 
+
+
+
+```
+
+{"unitCode": "wmoUnit:degC","value": 19.444444444444443}
+.derive({
+    dewpoint_value: (d) => d.dewpoint.value,
+  })
+  
+{"relativeHumidity": { "unitCode": "wmoUnit:percent", "value": 52}}
+
+"probabilityOfPrecipitation": {"unitCode": "wmoUnit:percent", "value": 6 }
+
+### viz
+
+```{ojs}
+//| warning: false
+//| message: false
+
+Plot.plot({
+  marks: [
+    Plot.ruleY([0]),
+    Plot.lineY(my_dew_df, {
+      x: "startTime",
+      y: "temperature",
+      stroke: "orange"
+    }),
+    Plot.lineY(my_dew_df, {
+      x: "startTime",
+      y: "dewpoint_F", 
+      stroke: "green"
+    }),
+    Plot.lineY(my_dew_df, {
+      x: "startTime",
+      y: "heat_index", 
+      stroke: "red"
+    }),
+//    Plot.barY(my_dew_df, {
+//      x: 'startTime',
+//      y: 'rain_probability',
+//      fill: "lightblue"
+//    })
+  ]
+})
+
+Plot.plot({
+  marks: [
+    Plot.ruleY([0]),
+    Plot.lineY(my_dew_df, {
+      x: "startTime",
+      y: "temperature",
+      stroke: "orange"
+    }),
+    Plot.lineY(my_dew_df, {
+      x: "startTime",
+      y: "dewpoint_F", 
+      stroke: "green"
+    }),
+    Plot.lineY(my_dew_df, {
+      x: "startTime",
+      y: "heat_index", 
+      stroke: "red"
+    }),
+    Plot.barY(my_dew_df, {
+      x: 'startTime',
+      y: 'rain_probability',
+      fill: "lightblue"
+    })
+  ]
+})
+
+Plot.plot({
+  marks: [
+    Plot.ruleY([0]),
+    Plot.barY(my_dew_df, {
+      x: 'startTime',
+      y: 'rain_probability',
+      fill: "lightblue"
+    }),
+  ]
+})
+```
+
+
+
+## Import arquero libraries
+
+```{ojs}
+import { aq, op } from '@uwdata/arquero'
+import { fromGeoJSON } from '@aris-data/arquero'
+// import { fromJSON } from "arquero";
+// import { dataframe } from "arquero/dataframe";
+// import { Observable } from "@mblsha/rxjs";
+
+// import {d3-time-format}
+// d3 = require("d3@6")
+```

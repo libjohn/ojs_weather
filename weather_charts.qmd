@@ -1,0 +1,330 @@
+---
+title: "weather_and_xml"
+format: html
+editor: visual
+---
+
+## library packages
+
+```{r}
+#| warning: false
+#| message: false
+library(tidyverse)
+library(xml2)
+library(patchwork)
+library(ggtext)
+library(jsonlite)
+```
+
+## load data
+
+-   https://www.weather.gov/
+-   limit by locale
+-   https://forecast.weather.gov/MapClick.php?textField1=36&textField2=-78.9
+-   find "hourly weather forecast"
+-   XML output: https://forecast.weather.gov/MapClick.php?lat=36&lon=-78.9&FcstType=digitalDWML
+
+### weather.gov API
+
+https://www.weather.gov/documentation/services-web-api my x,y coords: https://api.weather.gov/points/36,-78.9 \# get office and x and y my forcast: https://api.weather.gov/gridpoints/RAH/64,66/forecast
+
+```{r}
+my_df <- xml2::read_xml("https://forecast.weather.gov/MapClick.php?lat=36&lon=-78.9&FcstType=digitalDWML")
+```
+
+## Parse XML
+
+```{r}
+my_temperature <- my_df %>%
+  xml_child("data") %>% 
+  xml_child("parameters") %>% 
+  xml_child("temperature") %>% 
+  # xml_length()
+  # xml_siblings()
+  xml_children() %>% 
+  xml_integer()
+
+my_temperature
+
+tibble(my_temperature)
+```
+
+```{r}
+my_df %>%
+  xml_child("data") %>%
+  xml_child("parameters") %>%
+  xml_child("temperature") %>% 
+  # xml_child("wind-speed")
+  xml_attrs("dew point")
+```
+
+```{r}
+# my_df %>%
+#   xml_structure()
+
+# my_df %>% 
+#   xml_child("data") %>%
+#   xml_child("parameters") %>%
+#   xml_child("temperature") %>% 
+#   xml_contents()
+
+start_time <- my_df %>%
+  xml_child("data") %>%
+  # xml_child("time-layout")
+  xml_find_all("//start-valid-time") %>% 
+  xml_text()
+
+
+heat_index <- my_df %>% 
+  xml_find_all("//temperature[@type='heat index']") %>% 
+  xml_children() %>% 
+  xml_integer()
+
+
+# probability-of-precipitation type="floating"  
+
+rain_chance <- my_df %>% 
+  xml_find_all("//probability-of-precipitation[@type='floating']") %>% 
+  xml_children() %>% 
+  xml_integer()
+
+
+dew_point <- my_df %>% 
+  xml_find_all("//temperature[@type='dew point']") %>% 
+  xml_children() %>% 
+  xml_integer()
+
+
+temp <- my_df %>% 
+  xml_find_all("//temperature[@type='hourly']") %>% 
+  xml_children() %>% 
+  xml_integer()
+
+```
+
+```{r}
+my_weather_summary <- tibble(date_time = force_tz(ymd_hms(start_time), 
+                                                  tzone = "America/New_York")
+                              %m-% hours(4), 
+                             temp, heat_index, 
+                             rain_chance, dew_point) 
+my_weather_summary
+```
+
+## Viz
+
+```{r}
+#| message: false
+#| warning: false
+my_weather_summary %>% 
+  pivot_longer(-date_time, names_to = "weather_type") %>% 
+  filter(weather_type != "rain_chance") %>% 
+  mutate(weather_type = factor(weather_type, levels = c("heat_index", "temp", "dew_point"))) %>% 
+  ggplot(aes(date_time, value)) +
+  geom_line(aes(color = weather_type)) +
+  geom_hline(yintercept = 72, color = "blue", alpha = .2) +
+  scale_color_manual(values = c("firebrick", "darkorange", "blue"))
+
+```
+
+### Day one
+
+```{r}
+#| message: false
+#| warning: false
+my_weather_summary |> 
+  mutate(floor = as.Date(min(date_time)), .after = date_time) |> 
+  mutate(floor = floor %m+% days(1)) |> 
+  filter(date_time < floor) |> 
+  select(-floor) |> 
+  pivot_longer(-date_time, names_to = "weather_type") %>% 
+  filter(weather_type != "rain_chance") %>% 
+  mutate(weather_type = factor(weather_type, levels = c("heat_index", "temp", "dew_point"))) %>% 
+  ggplot(aes(date_time, value)) +
+  geom_line(aes(color = weather_type)) +
+  geom_hline(yintercept = 72, color = "blue", alpha = .2) +
+  scale_color_manual(values = c("firebrick", "darkorange", "blue")) +
+  scale_x_datetime(date_labels = "%l %p",
+                   date_breaks = "2 hours")
+```
+
+### Day one through five
+
+```{r}
+#| message: false
+#| warning: false
+plot_temp_dew <- my_weather_summary |> 
+  mutate(ceiling = as.Date(min(date_time)), .after = date_time) |> 
+  mutate(ceiling = ceiling %m+% days(4)) |> 
+  filter(date_time < ceiling) |> 
+  select(-ceiling) |> 
+  pivot_longer(-date_time, names_to = "weather_type") %>% 
+  filter(weather_type != "rain_chance") %>% 
+  mutate(weather_type = factor(weather_type, levels = c("heat_index", "temp", "dew_point"))) %>% 
+  ggplot(aes(date_time, value)) +
+  geom_line(aes(color = weather_type), show.legend = FALSE) +
+  geom_hline(yintercept = 72, color = "blue", alpha = .2) +
+  scale_color_manual(values = c("firebrick", "darkorange", "blue")) +
+  scale_y_continuous(labels = function(x) paste0(x, expression("℉"))) +
+  labs(x = NULL, y = NULL, 
+       title = "<span style='color:darkorange'>Temp</span> / <span style='color:blue'>dew</span>") +
+  theme(plot.title = element_markdown())
+plot_temp_dew
+
+
+```
+
+### Chance of Rain
+
+```{r}
+plot_chance_rain <- my_weather_summary |> 
+  mutate(ceiling = as.Date(min(date_time))) |> 
+  mutate(ceiling = ceiling %m+% days(4)) |> 
+  mutate(rain_chance = rain_chance / 100) |> 
+  filter(date_time < ceiling) |> 
+  ggplot(aes(date_time, rain_chance)) +
+  geom_col(fill = "lightblue", alpha = .4) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(y = NULL, x = NULL, title = "Chance of Rain")
+plot_chance_rain
+```
+
+foo
+
+```{r}
+#| message: false
+#| warning: false
+plot_temp_dew / plot_chance_rain
+```
+
+## JSON
+
+```{r}
+# my_json <- jsonlite::read_json("https://api.weather.gov/gridpoints/RAH/64,66/forecast?units=us")
+# my_json <- jsonlite::read_json("https://api.weather.gov/gridpoints/RAH/64,66/forecast/hourly?units=us")
+
+# my_json
+
+
+
+# my_json <- fromJSON("https://api.weather.gov/gridpoints/RAH/64,66/forecast?units=us")
+# temp_data <- my_json$properties$periods[c("name", "temperature")]
+# temp_df <- as.data.frame(temp_data)
+
+
+my_json <- fromJSON("https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us")  
+
+# fromJSON("https://api.weather.gov/gridpoints/RAH/63,68/forecast/hourly?units=us")  
+
+my_dew_df <- my_json$properties$periods$dewpoint |> 
+  janitor::clean_names() |> 
+  as_tibble() |> 
+  rename(dew_unit_code = unit_code) |> 
+  rename(dew_point = value) |> 
+  mutate(dew_point_F = (dew_point * 1.8 + 32))  # °C × 9/5) + 32
+
+my_dew_df
+
+my_precip_df <- my_json$properties$periods$probabilityOfPrecipitation |> 
+  janitor::clean_names() |> 
+  as_tibble() |> 
+  rename(precip_unit = unit_code) |> 
+  rename(precip = value)
+
+my_precip_df
+
+
+temp_df <- my_json$properties$periods[c("startTime", "temperature", "temperatureUnit")] |> 
+  as_tibble() |> 
+  janitor::clean_names() |> 
+  mutate(start_time = force_tz(ymd_hms(start_time), 
+                               tzone = "America/New_York")
+         %m-% hours(4))
+  # mutate(start_time = lubridate::ymd_hms(start_time))
+
+temp_df |> 
+  bind_cols(my_dew_df) |> 
+  bind_cols(my_precip_df)
+
+```
+
+## OJS
+
+### Import data
+
+```{ojs}
+// mydata = FileAttachment('data/penguins.csv').csv({typed: true})
+mydata = FileAttachment('data/MapClick.xml').xml
+
+mydata
+```
+
+```{ojs}
+url = await FileAttachment("https://forecast.weather.gov/MapClick.php?lat=36&lon=-78.9&FcstType=digitalDWML").url
+
+response = await fetch(url)
+response
+```
+
+```{ojs}
+xmlText = await response.text()
+xmlText
+```
+
+```{ojs}
+// xml2js = require('xml2js')   // see libraries
+parser = new xml2js.Parser({explicitArray: false})
+data = await parser.parseStringPromise(xmlText)
+
+table = aq.from(data.dwml.data.parameters.temperature)
+table.view()
+
+
+// transform to arquero so I can use the .view() function
+// must import arquero for this (See last codec, below)
+// mybar = aq.from(url)
+
+// mybar.view()
+
+```
+
+```{ojs}
+url2 = 'https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us';
+
+
+// fetch JSON
+jsonData = fetch(url2)
+  .then(response => response.json());
+
+jsonData
+  
+// convert to data frame
+dataFrame = from(jsonData)
+  .pipe(
+    map(data => ({
+      validTime: data.properties.validTime,
+      temperature: data.properties.temperature.value,
+      windSpeed: data.properties.windSpeed.value,
+      precipitationProbability: data.properties.probabilityOfPrecipitation.value
+    }))
+  )
+  .toArray()
+  .then(dataArray => new DataFrame(dataArray));
+
+dataFrame
+```
+
+### libraries
+
+```{ojs}
+import { aq, op } from '@uwdata/arquero'
+
+import { from } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { DataFrame } from 'data-forge';
+
+
+// import {d3-time-format}
+// d3 = require("d3@6")
+xml2js = require("https://bundle.run/xml2js@0.4.23")
+```

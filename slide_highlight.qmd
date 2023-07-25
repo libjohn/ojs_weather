@@ -1,0 +1,147 @@
+---
+title: "code highlight"
+format: revealjs
+editor: visual
+---
+
+## foo
+
+```{r}
+#| echo: TRUE
+#| code-line-numbers: "3-13"
+
+library(tidyverse)
+
+my_emd <- c(
+  "iletisim@ahmetbarut.net",
+"akljd@mail.",
+"askdioaj@gmail.com",
+";lafjkl@duke.edu",
+"ksdfhio@cs.duke.edu",
+"afl;kl;d@gmail.com",
+"kdijermkdf@gmail.com",
+"kdifjfie@eenergy.com",
+"whoa@hiduke.edu",
+"joah@1duke.com")
+
+my_df <- tibble(email = my_emd)
+```
+
+## Highlight
+
+```{r}
+#| echo: TRUE
+#| code-line-numbers: "1|3,8,12-13"
+
+my_emd <- c(
+  "iletisim@ahmetbarut.net",
+"akljd@mail.",
+"askdioaj@gmail.com",
+";lafjkl@duke.edu",
+"ksdfhio@cs.duke.edu",
+"afl;kl;d@gmail.com",
+"kdijermkdf@gmail.com",
+"kdifjfie@eenergy.com",
+"whoa@hiduke.edu",
+"joah@1duke.com")
+
+my_df <- tibble(email = my_emd)
+```
+
+## box
+
+::: {.two-column}
+
+::: {.left-column}
+This is the left column.
+:::
+
+::: {.right-column}
+This is the right column.
+:::
+
+:::
+
+<style>
+.two-column {
+  display: flex;
+}
+
+.left-column {
+  flex: 1;
+  background-color: #eee;
+}
+
+.right-column {
+  flex: 1;
+  background-color: #ccc;
+}
+</style>
+
+## box layout
+
+::: {layout="[[1,1], [1]]" style="background-color: grey;"}
+
+the [color yellow background]{style="background-color: yellow;"}. is [red]{style="color: red; background-color: blue;"}
+
+CAT
+
+[SAT]{style="color: darkorange; background-color: yellow;"}
+:::
+
+## another
+
+::: {layout="[ [1], [1,1] ]"}
+This is column 1.
+
+This is column 2.
+
+with more text
+:::
+
+<!-- The following doesn't seem to work but comes from StackExchange -->
+<style>
+.quarto-column:nth-child(1) {
+  background-color: #eee;
+}
+
+.quarto-column:nth-child(2) {
+  background-color: #ccc;
+}
+</style>
+
+## More boxes
+
+::: {layout="[[70,30], [100]]"}
+
+[Surus (surus.png) the second chilliest of the cools while wang Lin is considered only sub par when not contemplating nonsense]{style="background-color: cornflowerblue; background-clip: padding-box; border: none;"}
+
+Hanno (hanno.png)
+
+[Lin Wang (lin-wang.png) is the chilliest of the cools while wang Lin is considered only sub par when not contemplating nonsense]{style="background-color: #D3D3D3; border: none; padding: 10px; border-top: 1px solid #D3D3D3; border-bottom: 1px solid #D3D3D3;"}
+:::
+
+## more foo
+
+[And now is the time for all good chat-poes to come to the aid of their coders]{style="background-color: #D3D3D3; border-radius: 10px; width: 50%;"}
+
+## box layout
+
+::: {layout="[[1,1], [1]]" style="background-color: grey;"}
+
+the [color yellow background]{style="background-color: yellow;"}. is [red]{style="color: red; background-color: blue;"}
+
+CAT
+
+[SAT]{style="color: darkorange; background-color: yellow;"}
+:::
+
+::: {layout="[[1,1], [1]]" style="background-color: #D3D3D3; border-radius: 10px; width: 50%;"}
+
+the [color yellow background]{style="background-color: red;"}. is [red]{style="color: yellow; background-color: blue;"}
+
+CAT
+
+[SAT]{style="color: darkorange; background-color: yellow;"}
+:::
+
