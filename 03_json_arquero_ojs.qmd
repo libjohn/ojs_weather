@@ -1,0 +1,133 @@
+---
+title: "JSON Weather .gov API"
+format: html
+editor: visual
+---
+
+```{ojs}
+//| echo: false
+viewof url = Inputs.radio(
+  new Map([
+    [
+      "Bull City",
+      "https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us"
+    ],
+    [
+      "location 2",
+      "https://api.weather.gov/gridpoints/GRB/68,20/forecast/hourly?units=us"
+    ]
+  ]),
+  {
+    value:
+      "https://api.weather.gov/gridpoints/GRB/68,20/forecast/hourly?units=us",
+    label: "Size"
+  }
+)
+
+viewof start_date = await Inputs.date({label: "Start", value: date_range[0], min: date_range[0], max: date_range[1]})
+
+viewof end_date = Inputs.date({label: "End", value: date_range[1], min: date_range[0], max: date_range[1]})
+
+date_range = d3.extent(my_weather_df, d => d.startTime)
+```
+
+```{ojs}
+//| echo: false
+
+Plot.plot({
+  color: { range: ["forestgreen", "firebrick", "lightblue", "darkorange"] },
+  y: { label: "Degrees F/Probability" },
+  marks: [
+    Plot.ruleY([0]),
+    Plot.lineY(my_filtered_weather, {
+      x: "startTime",
+      y: "value",
+      z: "measurement",
+      stroke: "measurement",
+      strokeWidth: 2,
+      title: "measurement"
+    }),
+//    Plot.tip(
+//      my_filtered_weather,
+//      Plot.pointer({
+//        x: "startTime",
+//        y: "value",
+//        stroke: "measurement",
+//        channels: { measurement: "measurement"},
+//      })
+//    ),
+    Plot.ruleY([0])
+  ]
+})
+```
+
+what
+## testing
+
+```{ojs}
+my_filtered_weather.view()
+```
+
+
+## wrangle data
+
+Filter data by date, based on drop-down boxes
+
+```{ojs}
+my_filtered_weather = my_weather_df_tall
+  .filter(aq.escape(d => d.startTime >= start_date && d.startTime <= end_date)) 
+```
+
+
+- Create `heat_index` from `temp` and `humidity`
+- Make data tall
+
+```{ojs}
+my_weather_df_tall = my_weather_df
+  .derive({  startTime: d =>  op.parse_date(d.startTime) })
+  .derive({
+    dewpoint_F: (d) => d.dewpoint.value
+  })
+  .derive({
+    dewpoint_F: d => (d.dewpoint_F * (9 / 5) + 32)
+  })
+  .derive({
+    humidity_rel: d => d.relativeHumidity.value
+  })
+  .derive({
+    heat_index: d => (-42.379 + 
+    (2.04901523 * d.temperature) + 
+    (10.14333127 * d.humidity_rel) -
+    (.22475541 * d.temperature * d.humidity_rel) - 
+    (.00683783 * d.temperature * d.temperature) - 
+    (.05481717 * d.humidity_rel * d.humidity_rel) + 
+    (.00122874 * d.temperature * d.temperature * d.humidity_rel) + 
+    (.00085282 * d.temperature * d.humidity_rel * d.humidity_rel) - 
+    (.00000199 * d.temperature * d.temperature * d.humidity_rel * d.humidity_rel))
+    })
+  .derive({
+    heat_index: d => op.round(d.heat_index, 0)
+    })
+  .derive({
+    rain_probability: d => d.probabilityOfPrecipitation.value 
+    })
+  .fold(['temperature', 'dewpoint_F', 'heat_index', 'rain_probability'], {as: ['measurement', 'value']}) 
+//   fold() = pivot_longer() 
+```
+
+
+## Gather data from Weather.gov API
+
+```{ojs}
+my_json_weather = await d3.json(url) 
+my_weather_df   = await aq.from(my_json_weather.properties.periods)
+```
+
+## Import arquero libraries
+
+```{ojs}
+import { aq, op } from '@uwdata/arquero'
+import { stateShapes } from '@danielkerrigan/synchronized-map-input'
+// import { fromGeoJSON } from '@aris-data/arquero'
+// import { fromJSON } from "arquero";
+```

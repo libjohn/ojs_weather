@@ -138,13 +138,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Heat Index https://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml</p>
 <p>HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - .22475541 * T * RH - .00683783 * T * T - .05481717 * RH * RH + .00122874 * T * T * RH + .00085282 * T * RH * RH - .00000199 * T * T * RH * RH</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2" data-startfrom="32" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 31;"><span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>foo <span class="op">=</span> <span class="cf">await</span> d3<span class="op">.</span><span class="fu">json</span>(url_drm) <span class="co">// 'https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us')</span></span>
+<div class="sourceCode cell-code" id="cb2" data-startfrom="30" data-source-offset="-2"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 29;"><span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>foo <span class="op">=</span> <span class="cf">await</span> d3<span class="op">.</span><span class="fu">json</span>(url_drm) <span class="co">// 'https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us')</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>foo_periods <span class="op">=</span> foo<span class="op">.</span><span class="at">properties</span><span class="op">.</span><span class="at">periods</span></span>
 <span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>foo_periods <span class="op">=</span> foo<span class="op">.</span><span class="at">properties</span><span class="op">.</span><span class="at">periods</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co">// foo_periods[0]</span></span>
 <span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co">// foo_periods[0]</span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>aq<span class="op">.</span><span class="fu">from</span>(foo_periods)<span class="op">.</span><span class="fu">view</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>aq<span class="op">.</span><span class="fu">from</span>(foo_periods)<span class="op">.</span><span class="fu">view</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-2-1" data-nodetype="declaration">
@@ -166,43 +166,69 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb3" data-startfrom="40" data-source-offset="-200"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 39;"><span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>temp_df <span class="op">=</span> aq<span class="op">.</span><span class="fu">from</span>(foo_periods)</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>my_df <span class="op">=</span> temp_df</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({  <span class="dt">startTime</span><span class="op">:</span> d <span class="kw">=&gt;</span>  op<span class="op">.</span><span class="fu">parse_date</span>(d<span class="op">.</span><span class="at">startTime</span>) })</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>my_dew_df <span class="op">=</span> my_df</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    <span class="dt">dewpoint_F</span><span class="op">:</span> (d) <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">dewpoint</span><span class="op">.</span><span class="at">value</span></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    <span class="dt">dewpoint_F</span><span class="op">:</span> d <span class="kw">=&gt;</span> (d<span class="op">.</span><span class="at">dewpoint_F</span> <span class="op">*</span> (<span class="dv">9</span> <span class="op">/</span> <span class="dv">5</span>) <span class="op">+</span> <span class="dv">32</span>)</span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    <span class="dt">humidity_rel</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">relativeHumidity</span><span class="op">.</span><span class="at">value</span></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="dt">heat_index</span><span class="op">:</span> d <span class="kw">=&gt;</span> <span class="op">-</span><span class="fl">42.379</span> <span class="op">+</span> </span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    (<span class="fl">2.04901523</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span>) <span class="op">+</span> </span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    (<span class="fl">10.14333127</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span>) <span class="op">-</span></span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    (<span class="op">.</span><span class="dv">22475541</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span>) <span class="op">-</span> </span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    (<span class="op">.</span><span class="dv">00683783</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span>) <span class="op">-</span> </span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    (<span class="op">.</span><span class="dv">05481717</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span>) <span class="op">+</span> </span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    (<span class="op">.</span><span class="dv">00122874</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span>) <span class="op">+</span> </span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    (<span class="op">.</span><span class="dv">00085282</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span>) <span class="op">-</span> </span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    (<span class="op">.</span><span class="dv">00000199</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span>)</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    <span class="dt">heat_index</span><span class="op">:</span> d <span class="kw">=&gt;</span> op<span class="op">.</span><span class="fu">round</span>(d<span class="op">.</span><span class="at">heat_index</span><span class="op">,</span> <span class="dv">0</span>)</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    <span class="dt">rain_probability</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">probabilityOfPrecipitation</span><span class="op">.</span><span class="at">value</span></span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="co">// HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - .22475541 * T * RH - .00683783 * T * T - .05481717 * RH * RH + .00122874 * T * T * RH + .00085282 * T * RH * RH - .00000199 * T * T * RH * RH</span></span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> my_dew_df<span class="op">.</span><span class="fu">view</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3" data-startfrom="38" data-source-offset="-202"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 37;"><span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>temp_df <span class="op">=</span> aq<span class="op">.</span><span class="fu">from</span>(foo_periods)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>my_df <span class="op">=</span> temp_df</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({  <span class="dt">startTime</span><span class="op">:</span> d <span class="kw">=&gt;</span>  op<span class="op">.</span><span class="fu">parse_date</span>(d<span class="op">.</span><span class="at">startTime</span>) })</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>my_dew_df <span class="op">=</span> my_df</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    <span class="dt">dewpoint_F</span><span class="op">:</span> (d) <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">dewpoint</span><span class="op">.</span><span class="at">value</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    <span class="dt">dewpoint_F</span><span class="op">:</span> d <span class="kw">=&gt;</span> (d<span class="op">.</span><span class="at">dewpoint_F</span> <span class="op">*</span> (<span class="dv">9</span> <span class="op">/</span> <span class="dv">5</span>) <span class="op">+</span> <span class="dv">32</span>)</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    <span class="dt">humidity_rel</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">relativeHumidity</span><span class="op">.</span><span class="at">value</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="dt">heat_index</span><span class="op">:</span> d <span class="kw">=&gt;</span> <span class="op">-</span><span class="fl">42.379</span> <span class="op">+</span> </span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    (<span class="fl">2.04901523</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span>) <span class="op">+</span> </span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    (<span class="fl">10.14333127</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span>) <span class="op">-</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    (<span class="op">.</span><span class="dv">22475541</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span>) <span class="op">-</span> </span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    (<span class="op">.</span><span class="dv">00683783</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span>) <span class="op">-</span> </span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    (<span class="op">.</span><span class="dv">05481717</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span>) <span class="op">+</span> </span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    (<span class="op">.</span><span class="dv">00122874</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span>) <span class="op">+</span> </span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    (<span class="op">.</span><span class="dv">00085282</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span>) <span class="op">-</span> </span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    (<span class="op">.</span><span class="dv">00000199</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">temperature</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span> <span class="op">*</span> d<span class="op">.</span><span class="at">humidity_rel</span>)</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    <span class="dt">heat_index</span><span class="op">:</span> d <span class="kw">=&gt;</span> op<span class="op">.</span><span class="fu">round</span>(d<span class="op">.</span><span class="at">heat_index</span><span class="op">,</span> <span class="dv">0</span>)</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    <span class="dt">rain_probability</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">probabilityOfPrecipitation</span><span class="op">.</span><span class="at">value</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    <span class="dt">day_n</span><span class="op">:</span> d <span class="kw">=&gt;</span> op<span class="op">.</span><span class="fu">dayofweek</span>(d<span class="op">.</span><span class="at">startTime</span>)</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    <span class="dt">day_string</span><span class="op">:</span> row <span class="kw">=&gt;</span> {</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (row<span class="op">.</span><span class="at">day_n</span> <span class="op">==</span> <span class="dv">0</span>) <span class="cf">return</span> <span class="st">"Sun"</span><span class="op">;</span></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (row<span class="op">.</span><span class="at">day_n</span> <span class="op">==</span> <span class="dv">1</span>) <span class="cf">return</span> <span class="st">"Mon"</span><span class="op">;</span>  </span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (row<span class="op">.</span><span class="at">day_n</span> <span class="op">==</span> <span class="dv">2</span>) <span class="cf">return</span> <span class="st">"Tues"</span><span class="op">;</span></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (row<span class="op">.</span><span class="at">day_n</span> <span class="op">==</span> <span class="dv">3</span>) <span class="cf">return</span> <span class="st">"Wed"</span><span class="op">;</span></span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (row<span class="op">.</span><span class="at">day_n</span> <span class="op">==</span> <span class="dv">4</span>) <span class="cf">return</span> <span class="st">"Thurs"</span><span class="op">;</span>  </span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (row<span class="op">.</span><span class="at">day_n</span> <span class="op">==</span> <span class="dv">5</span>) <span class="cf">return</span> <span class="st">"Fri"</span><span class="op">;</span></span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (row<span class="op">.</span><span class="at">day_n</span> <span class="op">==</span> <span class="dv">6</span>) <span class="cf">return</span> <span class="st">"Sat"</span></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>    <span class="dt">month</span><span class="op">:</span> d <span class="kw">=&gt;</span> op<span class="op">.</span><span class="fu">month</span>(d<span class="op">.</span><span class="at">startTime</span>) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>    <span class="dt">date_month</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="fu">date</span>(d<span class="op">.</span><span class="at">startTime</span>)</span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>    <span class="dt">date_month</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="fu">date</span>(d<span class="op">.</span><span class="at">startTime</span>)</span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>    <span class="dt">date_string</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">day_string</span> <span class="op">+</span> <span class="st">", "</span> <span class="op">+</span> d<span class="op">.</span><span class="at">month</span> <span class="op">+</span> <span class="st">"/"</span> <span class="op">+</span> d<span class="op">.</span><span class="at">date_month</span></span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a><span class="co">// HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - .22475541 * T * RH - .00683783 * T * T - .05481717 * RH * RH + .00122874 * T * T * RH + .00085282 * T * RH * RH - .00000199 * T * T * RH * RH</span></span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> my_dew_df<span class="op">.</span><span class="fu">view</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-2-4" data-nodetype="declaration">
@@ -232,38 +258,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>{“unitCode”: “wmoUnit:degC”,“value”: 19.444444444444443} .derive({ dewpoint_value: (d) =&gt; d.dewpoint.value, })</p>
-<p>{“relativeHumidity”: { “unitCode”: “wmoUnit:percent”, “value”: 52}}</p>
-<p>“probabilityOfPrecipitation”: {“unitCode”: “wmoUnit:percent”, “value”: 6 }</p>
 </section>
 <section id="viz" class="level3">
 <h3 class="anchored" data-anchor-id="viz">viz</h3>
 <div class="cell" data-warning="false" data-message="false">
-<div class="sourceCode cell-code" id="cb4" data-startfrom="100" data-source-offset="-2"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 99;"><span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
-<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
-<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
-<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
-<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
-<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"temperature"</span><span class="op">,</span></span>
-<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"orange"</span></span>
-<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
-<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
-<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
-<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"dewpoint_F"</span><span class="op">,</span> </span>
-<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"green"</span></span>
-<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
-<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
-<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
-<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"heat_index"</span><span class="op">,</span> </span>
-<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"red"</span></span>
-<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
-<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a><span class="co">//    Plot.barY(my_dew_df, {</span></span>
-<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a><span class="co">//      x: 'startTime',</span></span>
-<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a><span class="co">//      y: 'rain_probability',</span></span>
-<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a><span class="co">//      fill: "lightblue"</span></span>
-<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a><span class="co">//    })</span></span>
-<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4" data-startfrom="109" data-source-offset="-2"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 108;"><span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"temperature"</span><span class="op">,</span></span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"orange"</span></span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"dewpoint_F"</span><span class="op">,</span> </span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"green"</span><span class="op">,</span></span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">text</span>(my_dew_df<span class="op">,</span>  Plot<span class="op">.</span><span class="fu">selectMaxX</span>({</span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"dewpoint_F"</span><span class="op">,</span></span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>      <span class="dt">text</span><span class="op">:</span> [<span class="st">"Humidity"</span>]<span class="op">,</span></span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>      <span class="dt">lineAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span></span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fill</span><span class="op">:</span> [<span class="st">"green"</span>]<span class="op">,</span></span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>      <span class="co">//dy: 100,</span></span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>      <span class="co">//dx: 100,</span></span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">24</span></span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>    }))<span class="op">,</span></span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"heat_index"</span><span class="op">,</span> </span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"red"</span></span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-3-1" data-nodetype="expression">
@@ -271,31 +299,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb5" data-startfrom="126" data-source-offset="-510"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 125;"><span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
-<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
-<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
-<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
-<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
-<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"temperature"</span><span class="op">,</span></span>
-<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"orange"</span></span>
-<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
-<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
-<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
-<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"dewpoint_F"</span><span class="op">,</span> </span>
-<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"green"</span></span>
-<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
-<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
-<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
-<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"heat_index"</span><span class="op">,</span> </span>
-<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"red"</span></span>
-<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
-<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">barY</span>(my_dew_df<span class="op">,</span> {</span>
-<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">'startTime'</span><span class="op">,</span></span>
-<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">'rain_probability'</span><span class="op">,</span></span>
-<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fill</span><span class="op">:</span> <span class="st">"lightblue"</span></span>
-<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5" data-startfrom="140" data-source-offset="-625"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 139;"><span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"temperature"</span><span class="op">,</span></span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"orange"</span></span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"dewpoint_F"</span><span class="op">,</span> </span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"green"</span></span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"heat_index"</span><span class="op">,</span> </span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"red"</span></span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">barY</span>(my_dew_df<span class="op">,</span> {</span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">'startTime'</span><span class="op">,</span></span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">'rain_probability'</span><span class="op">,</span></span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fill</span><span class="op">:</span> <span class="st">"lightblue"</span></span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-3-2" data-nodetype="expression">
@@ -303,16 +331,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb6" data-startfrom="152" data-source-offset="-1008"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 151;"><span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
-<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
-<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
-<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">barY</span>(my_dew_df<span class="op">,</span> {</span>
-<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">'startTime'</span><span class="op">,</span></span>
-<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">'rain_probability'</span><span class="op">,</span></span>
-<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fill</span><span class="op">:</span> <span class="st">"lightblue"</span></span>
-<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
-<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6" data-startfrom="166" data-source-offset="-1123"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 165;"><span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">barY</span>(my_dew_df<span class="op">,</span> {</span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">'startTime'</span><span class="op">,</span></span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">'rain_probability'</span><span class="op">,</span></span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fill</span><span class="op">:</span> <span class="st">"lightblue"</span></span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
+<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-3-3" data-nodetype="expression">
@@ -322,21 +350,243 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="import-arquero-libraries" class="level2">
-<h2 class="anchored" data-anchor-id="import-arquero-libraries">Import arquero libraries</h2>
+<section id="goo" class="level2">
+<h2 class="anchored" data-anchor-id="goo">goo</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7" data-startfrom="169" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 168;"><span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { aq<span class="op">,</span> op } <span class="im">from</span> <span class="st">'@uwdata/arquero'</span></span>
-<span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { fromGeoJSON } <span class="im">from</span> <span class="st">'@aris-data/arquero'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7" data-startfrom="182" data-source-offset="-2"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 181;"><span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">barY</span>(alphabet<span class="op">,</span> {</span>
+<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"letter"</span><span class="op">,</span></span>
+<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"frequency"</span></span>
+<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
+<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">barY</span>(alphabet<span class="op">,</span> {</span>
+<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a>      <span class="dt">filter</span><span class="op">:</span> (d) <span class="kw">=&gt;</span> <span class="ss">/</span><span class="sc">[aeiouy]</span><span class="ss">/i</span><span class="op">.</span><span class="fu">test</span>(d<span class="op">.</span><span class="at">letter</span>)<span class="op">,</span></span>
+<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"letter"</span><span class="op">,</span></span>
+<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"frequency"</span><span class="op">,</span></span>
+<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"red"</span><span class="op">,</span></span>
+<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a>      <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">3</span><span class="op">,</span></span>
+<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a>      <span class="dt">inset</span><span class="op">:</span> <span class="op">-</span><span class="dv">3</span> <span class="co">// expand the bars</span></span>
+<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
-<div id="ojs-cell-4-1" data-nodetype="declaration">
+<div id="ojs-cell-4-1" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb8" data-startfrom="199" data-source-offset="-325"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 198;"><span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a>my_letters <span class="op">=</span> alphabet</span>
+<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a>aq<span class="op">.</span><span class="fu">from</span>(my_letters)<span class="op">.</span><span class="fu">view</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-4-2" data-nodetype="declaration">
 
 </div>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
-<div id="ojs-cell-4-2" data-nodetype="declaration">
+<div id="ojs-cell-4-3" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb9" data-startfrom="203" data-source-offset="-380"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 202;"><span id="cb9-203"><a href="#cb9-203" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb9-204"><a href="#cb9-204" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb9-205"><a href="#cb9-205" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
+<span id="cb9-206"><a href="#cb9-206" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_dew_df<span class="op">,</span> {</span>
+<span id="cb9-207"><a href="#cb9-207" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
+<span id="cb9-208"><a href="#cb9-208" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"dewpoint_F"</span><span class="op">,</span> </span>
+<span id="cb9-209"><a href="#cb9-209" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"green"</span><span class="op">,</span></span>
+<span id="cb9-210"><a href="#cb9-210" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
+<span id="cb9-211"><a href="#cb9-211" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">text</span>(my_dew_df<span class="op">,</span>  Plot<span class="op">.</span><span class="fu">selectFirst</span>({</span>
+<span id="cb9-212"><a href="#cb9-212" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
+<span id="cb9-213"><a href="#cb9-213" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"dewpoint_F"</span><span class="op">,</span></span>
+<span id="cb9-214"><a href="#cb9-214" aria-hidden="true" tabindex="-1"></a>      <span class="dt">text</span><span class="op">:</span> [<span class="st">"Humidity"</span>]<span class="op">,</span></span>
+<span id="cb9-215"><a href="#cb9-215" aria-hidden="true" tabindex="-1"></a>      <span class="dt">lineAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span></span>
+<span id="cb9-216"><a href="#cb9-216" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fill</span><span class="op">:</span> [<span class="st">"green"</span>]<span class="op">,</span></span>
+<span id="cb9-217"><a href="#cb9-217" aria-hidden="true" tabindex="-1"></a>      <span class="co">//dy: 100,</span></span>
+<span id="cb9-218"><a href="#cb9-218" aria-hidden="true" tabindex="-1"></a>      <span class="co">//dx: 156,</span></span>
+<span id="cb9-219"><a href="#cb9-219" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">24</span></span>
+<span id="cb9-220"><a href="#cb9-220" aria-hidden="true" tabindex="-1"></a>    }))<span class="op">,</span></span>
+<span id="cb9-221"><a href="#cb9-221" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">text</span>(my_dew_df<span class="op">,</span>  Plot<span class="op">.</span><span class="fu">selectMaxX</span>({</span>
+<span id="cb9-222"><a href="#cb9-222" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
+<span id="cb9-223"><a href="#cb9-223" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"dewpoint_F"</span><span class="op">,</span></span>
+<span id="cb9-224"><a href="#cb9-224" aria-hidden="true" tabindex="-1"></a>      <span class="dt">text</span><span class="op">:</span> [<span class="st">"Humidity"</span>]<span class="op">,</span></span>
+<span id="cb9-225"><a href="#cb9-225" aria-hidden="true" tabindex="-1"></a>      <span class="dt">lineAnchor</span><span class="op">:</span> <span class="st">"top"</span><span class="op">,</span></span>
+<span id="cb9-226"><a href="#cb9-226" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"Red"</span><span class="op">,</span></span>
+<span id="cb9-227"><a href="#cb9-227" aria-hidden="true" tabindex="-1"></a>      <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span></span>
+<span id="cb9-228"><a href="#cb9-228" aria-hidden="true" tabindex="-1"></a><span class="co">//      dy: 10,</span></span>
+<span id="cb9-229"><a href="#cb9-229" aria-hidden="true" tabindex="-1"></a><span class="co">//      dx: 156,</span></span>
+<span id="cb9-230"><a href="#cb9-230" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">24</span></span>
+<span id="cb9-231"><a href="#cb9-231" aria-hidden="true" tabindex="-1"></a>    }))</span>
+<span id="cb9-232"><a href="#cb9-232" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb9-233"><a href="#cb9-233" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-4-4" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb10" data-startfrom="235" data-source-offset="-1048"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 234;"><span id="cb10-235"><a href="#cb10-235" aria-hidden="true" tabindex="-1"></a>my_dew_df<span class="op">.</span><span class="fu">numRows</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-4-5" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb11" data-startfrom="237" data-source-offset="-1071"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 236;"><span id="cb11-237"><a href="#cb11-237" aria-hidden="true" tabindex="-1"></a>my_weather_long_df</span>
+<span id="cb11-238"><a href="#cb11-238" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">view</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-4-6" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb12" data-startfrom="241" data-source-offset="-1108"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 240;"><span id="cb12-241"><a href="#cb12-241" aria-hidden="true" tabindex="-1"></a>my_weather_long_df <span class="op">=</span> my_dew_df</span>
+<span id="cb12-242"><a href="#cb12-242" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">select</span>(<span class="st">"number"</span><span class="op">,</span> <span class="st">"startTime"</span><span class="op">,</span> <span class="st">"temperature"</span><span class="op">,</span> <span class="st">"dewpoint_F"</span><span class="op">,</span> <span class="st">"heat_index"</span><span class="op">,</span> <span class="st">"rain_probability"</span><span class="op">,</span> <span class="st">"day_n"</span><span class="op">,</span> <span class="st">"day_string"</span><span class="op">,</span> <span class="st">"month"</span><span class="op">,</span> <span class="st">"date_string"</span>)</span>
+<span id="cb12-243"><a href="#cb12-243" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">fold</span>([<span class="st">'temperature'</span><span class="op">,</span> <span class="st">'dewpoint_F'</span><span class="op">,</span> <span class="st">'heat_index'</span>]<span class="op">,</span> <span class="co">// 'rain_probability', </span></span>
+<span id="cb12-244"><a href="#cb12-244" aria-hidden="true" tabindex="-1"></a>    {<span class="dt">as</span><span class="op">:</span> [<span class="st">'measurement'</span><span class="op">,</span> <span class="st">'value'</span>]})</span>
+<span id="cb12-245"><a href="#cb12-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-246"><a href="#cb12-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-247"><a href="#cb12-247" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb12-248"><a href="#cb12-248" aria-hidden="true" tabindex="-1"></a>  <span class="dt">color</span><span class="op">:</span> {<span class="dt">legend</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">range</span><span class="op">:</span> [<span class="st">"forestgreen"</span><span class="op">,</span> <span class="st">"firebrick"</span><span class="op">,</span> <span class="st">"darkorange"</span>]}<span class="op">,</span> </span>
+<span id="cb12-249"><a href="#cb12-249" aria-hidden="true" tabindex="-1"></a>  <span class="co">//x: {domain: [op.parse_date('2023-07-27T13:00:00.000'), op.parse_date('2023-08-05')]},</span></span>
+<span id="cb12-250"><a href="#cb12-250" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb12-251"><a href="#cb12-251" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
+<span id="cb12-252"><a href="#cb12-252" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(my_weather_long_df<span class="op">,</span> {</span>
+<span id="cb12-253"><a href="#cb12-253" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
+<span id="cb12-254"><a href="#cb12-254" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"value"</span><span class="op">,</span> </span>
+<span id="cb12-255"><a href="#cb12-255" aria-hidden="true" tabindex="-1"></a>      <span class="dt">z</span><span class="op">:</span> <span class="st">"measurement"</span><span class="op">,</span></span>
+<span id="cb12-256"><a href="#cb12-256" aria-hidden="true" tabindex="-1"></a>      <span class="dt">stroke</span><span class="op">:</span> <span class="st">"measurement"</span><span class="op">,</span></span>
+<span id="cb12-257"><a href="#cb12-257" aria-hidden="true" tabindex="-1"></a>      <span class="dt">label</span><span class="op">:</span> <span class="st">"measurement"</span><span class="op">,</span></span>
+<span id="cb12-258"><a href="#cb12-258" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
+<span id="cb12-259"><a href="#cb12-259" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">text</span>(my_weather_long_df<span class="op">,</span> </span>
+<span id="cb12-260"><a href="#cb12-260" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">selectMinY</span>({</span>
+<span id="cb12-261"><a href="#cb12-261" aria-hidden="true" tabindex="-1"></a>        <span class="dt">x</span><span class="op">:</span> <span class="st">"startTime"</span><span class="op">,</span></span>
+<span id="cb12-262"><a href="#cb12-262" aria-hidden="true" tabindex="-1"></a>        <span class="dt">y</span><span class="op">:</span> <span class="st">"value"</span><span class="op">,</span></span>
+<span id="cb12-263"><a href="#cb12-263" aria-hidden="true" tabindex="-1"></a>        <span class="dt">z</span><span class="op">:</span> <span class="st">"measurement"</span><span class="op">,</span></span>
+<span id="cb12-264"><a href="#cb12-264" aria-hidden="true" tabindex="-1"></a>        <span class="dt">text</span><span class="op">:</span> <span class="st">"measurement"</span><span class="op">,</span></span>
+<span id="cb12-265"><a href="#cb12-265" aria-hidden="true" tabindex="-1"></a>        <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"start"</span><span class="op">,</span></span>
+<span id="cb12-266"><a href="#cb12-266" aria-hidden="true" tabindex="-1"></a>        <span class="dt">fill</span><span class="op">:</span> <span class="st">"measurement"</span><span class="op">,</span></span>
+<span id="cb12-267"><a href="#cb12-267" aria-hidden="true" tabindex="-1"></a>        <span class="dt">stroke</span><span class="op">:</span> <span class="st">"black"</span><span class="op">,</span></span>
+<span id="cb12-268"><a href="#cb12-268" aria-hidden="true" tabindex="-1"></a>        <span class="co">//fillOpacity: 0.8,</span></span>
+<span id="cb12-269"><a href="#cb12-269" aria-hidden="true" tabindex="-1"></a>        <span class="co">//stokeOpacity: 0.8,</span></span>
+<span id="cb12-270"><a href="#cb12-270" aria-hidden="true" tabindex="-1"></a>        <span class="dt">dy</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span></span>
+<span id="cb12-271"><a href="#cb12-271" aria-hidden="true" tabindex="-1"></a>        <span class="dt">dx</span><span class="op">:</span> <span class="op">-</span><span class="dv">5</span><span class="op">,</span></span>
+<span id="cb12-272"><a href="#cb12-272" aria-hidden="true" tabindex="-1"></a>        <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">18</span></span>
+<span id="cb12-273"><a href="#cb12-273" aria-hidden="true" tabindex="-1"></a>      }))<span class="op">,</span></span>
+<span id="cb12-274"><a href="#cb12-274" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb12-275"><a href="#cb12-275" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-4-7" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-4-8" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="distinct" class="level2">
+<h2 class="anchored" data-anchor-id="distinct">distinct</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13" data-startfrom="281" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 280;"><span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a>my_dates <span class="op">=</span> my_weather_long_df</span>
+<span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a> <span class="op">.</span><span class="fu">orderby</span>(<span class="st">'startTime'</span>)</span>
+<span id="cb13-283"><a href="#cb13-283" aria-hidden="true" tabindex="-1"></a> <span class="op">.</span><span class="fu">rollup</span>({<span class="dt">my_distinct</span><span class="op">:</span> op<span class="op">.</span><span class="fu">array_agg_distinct</span>(<span class="st">'date_string'</span>)})</span>
+<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-285"><a href="#cb13-285" aria-hidden="true" tabindex="-1"></a>my_weather_long_df</span>
+<span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a> <span class="op">.</span><span class="fu">orderby</span>(<span class="st">'startTime'</span>)</span>
+<span id="cb13-287"><a href="#cb13-287" aria-hidden="true" tabindex="-1"></a> <span class="op">.</span><span class="fu">rollup</span>({<span class="dt">my_distinct</span><span class="op">:</span> op<span class="op">.</span><span class="fu">array_agg_distinct</span>(<span class="st">'date_string'</span>)})</span>
+<span id="cb13-288"><a href="#cb13-288" aria-hidden="true" tabindex="-1"></a> <span class="op">.</span><span class="fu">view</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-2" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb14" data-startfrom="290" data-source-offset="-242"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 289;"><span id="cb14-290"><a href="#cb14-290" aria-hidden="true" tabindex="-1"></a>my_weather_long_df</span>
+<span id="cb14-291"><a href="#cb14-291" aria-hidden="true" tabindex="-1"></a><span class="co">// .orderby('startTime')</span></span>
+<span id="cb14-292"><a href="#cb14-292" aria-hidden="true" tabindex="-1"></a> <span class="op">.</span><span class="fu">rollup</span>({<span class="dt">my_distinct</span><span class="op">:</span> op<span class="op">.</span><span class="fu">array_agg_distinct</span>(<span class="st">'date_string'</span>)})</span>
+<span id="cb14-293"><a href="#cb14-293" aria-hidden="true" tabindex="-1"></a> <span class="op">.</span><span class="fu">view</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-3" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb15" data-startfrom="296" data-source-offset="-365"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 295;"><span id="cb15-296"><a href="#cb15-296" aria-hidden="true" tabindex="-1"></a>my_dates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-4" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16" data-startfrom="303" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 302;"><span id="cb16-303"><a href="#cb16-303" aria-hidden="true" tabindex="-1"></a>my_weather_long_df</span>
+<span id="cb16-304"><a href="#cb16-304" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({ <span class="dt">unq</span><span class="op">:</span> op<span class="op">.</span><span class="fu">distinct</span>(<span class="st">'date_string'</span>)})</span>
+<span id="cb16-305"><a href="#cb16-305" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">view</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-6" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17" data-startfrom="310" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 309;"><span id="cb17-310"><a href="#cb17-310" aria-hidden="true" tabindex="-1"></a>stateShapes<span class="op">.</span><span class="at">features</span><span class="op">.</span><span class="fu">map</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">properties</span><span class="op">.</span><span class="at">name</span>)<span class="op">.</span><span class="fu">sort</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-7-1" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb18" data-startfrom="312" data-source-offset="-59"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 311;"><span id="cb18-312"><a href="#cb18-312" aria-hidden="true" tabindex="-1"></a>aq<span class="op">.</span><span class="fu">from</span>(stateShapes<span class="op">.</span><span class="at">features</span>)<span class="op">.</span><span class="fu">view</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-7-2" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="import-arquero-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="import-arquero-libraries">Import arquero libraries</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19" data-startfrom="319" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 318;"><span id="cb19-319"><a href="#cb19-319" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { aq<span class="op">,</span> op } <span class="im">from</span> <span class="st">'@uwdata/arquero'</span></span>
+<span id="cb19-320"><a href="#cb19-320" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { stateShapes } <span class="im">from</span> <span class="st">'@danielkerrigan/synchronized-map-input'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-8-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-8-2" data-nodetype="declaration">
 
 </div>
 </div>
@@ -347,7 +597,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </main>
 <!-- /main column -->
 <script type="ojs-module-contents">
-{"contents":[{"methodName":"interpret","cellName":"ojs-cell-1","inline":false,"source":"url_drm = 'https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us'\r\nurl_othr = 'https://api.weather.gov/gridpoints/GRB/68,20/forecast/hourly?units=us'\r\n\r\n// my_js_df = aq.fromJSON(await fetch('https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us').then(res => res.json()), { autoType: false })\r\nmy_js_df = aq.fromJSON(await fetch(url_drm).then(res => res.json()), { autoType: false })\r\n\r\nmy_js_df.view()\r\n\r\n\r\n\r\n// properties = my_js_df.properties\r\n// properties.view()\r\n"},{"methodName":"interpret","cellName":"ojs-cell-2","inline":false,"source":"foo = await d3.json(url_drm) // 'https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us')\r\n\r\nfoo_periods = foo.properties.periods\r\n\r\n// foo_periods[0]\r\n\r\naq.from(foo_periods).view()\r\n\r\ntemp_df = aq.from(foo_periods)\r\n\r\nmy_df = temp_df\r\n  .derive({  startTime: d =>  op.parse_date(d.startTime) })\r\n  \r\nmy_dew_df = my_df\r\n  .derive({\r\n    dewpoint_F: (d) => d.dewpoint.value\r\n  })\r\n  .derive({\r\n    dewpoint_F: d => (d.dewpoint_F * (9 / 5) + 32)\r\n  })\r\n  .derive({\r\n    humidity_rel: d => d.relativeHumidity.value\r\n  })\r\n  .derive({\r\n    heat_index: d => -42.379 + \r\n    (2.04901523 * d.temperature) + \r\n    (10.14333127 * d.humidity_rel) -\r\n    (.22475541 * d.temperature * d.humidity_rel) - \r\n    (.00683783 * d.temperature * d.temperature) - \r\n    (.05481717 * d.humidity_rel * d.humidity_rel) + \r\n    (.00122874 * d.temperature * d.temperature * d.humidity_rel) + \r\n    (.00085282 * d.temperature * d.humidity_rel * d.humidity_rel) - \r\n    (.00000199 * d.temperature * d.temperature * d.humidity_rel * d.humidity_rel)\r\n  })\r\n  .derive({\r\n    heat_index: d => op.round(d.heat_index, 0)\r\n  })\r\n  .derive({\r\n    rain_probability: d => d.probabilityOfPrecipitation.value\r\n  })\r\n\r\n\r\n// HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - .22475541 * T * RH - .00683783 * T * T - .05481717 * RH * RH + .00122874 * T * T * RH + .00085282 * T * RH * RH - .00000199 * T * T * RH * RH\r\n  \r\nawait my_dew_df.view()\r\n\r\n// dewpoint = foo.properties.periods.dewpoint\r\n// dewpoint \r\n\r\n\r\n\r\n"},{"methodName":"interpret","cellName":"ojs-cell-3","inline":false,"source":"\r\nPlot.plot({\r\n  marks: [\r\n    Plot.ruleY([0]),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"temperature\",\r\n      stroke: \"orange\"\r\n    }),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"dewpoint_F\", \r\n      stroke: \"green\"\r\n    }),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"heat_index\", \r\n      stroke: \"red\"\r\n    }),\r\n//    Plot.barY(my_dew_df, {\r\n//      x: 'startTime',\r\n//      y: 'rain_probability',\r\n//      fill: \"lightblue\"\r\n//    })\r\n  ]\r\n})\r\n\r\nPlot.plot({\r\n  marks: [\r\n    Plot.ruleY([0]),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"temperature\",\r\n      stroke: \"orange\"\r\n    }),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"dewpoint_F\", \r\n      stroke: \"green\"\r\n    }),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"heat_index\", \r\n      stroke: \"red\"\r\n    }),\r\n    Plot.barY(my_dew_df, {\r\n      x: 'startTime',\r\n      y: 'rain_probability',\r\n      fill: \"lightblue\"\r\n    })\r\n  ]\r\n})\r\n\r\nPlot.plot({\r\n  marks: [\r\n    Plot.ruleY([0]),\r\n    Plot.barY(my_dew_df, {\r\n      x: 'startTime',\r\n      y: 'rain_probability',\r\n      fill: \"lightblue\"\r\n    }),\r\n  ]\r\n})\r\n"},{"methodName":"interpret","cellName":"ojs-cell-4","inline":false,"source":"import { aq, op } from '@uwdata/arquero'\r\nimport { fromGeoJSON } from '@aris-data/arquero'\r\n// import { fromJSON } from \"arquero\";\r\n// import { dataframe } from \"arquero/dataframe\";\r\n// import { Observable } from \"@mblsha/rxjs\";\r\n\r\n// import {d3-time-format}\r\n// d3 = require(\"d3@6\")\r\n"}]}
+{"contents":[{"methodName":"interpret","cellName":"ojs-cell-1","inline":false,"source":"url_drm = 'https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us'\r\nurl_othr = 'https://api.weather.gov/gridpoints/GRB/68,20/forecast/hourly?units=us'\r\n\r\n// my_js_df = aq.fromJSON(await fetch('https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us').then(res => res.json()), { autoType: false })\r\nmy_js_df = aq.fromJSON(await fetch(url_drm).then(res => res.json()), { autoType: false })\r\n\r\nmy_js_df.view()\r\n\r\n\r\n\r\n// properties = my_js_df.properties\r\n// properties.view()\r\n"},{"methodName":"interpret","cellName":"ojs-cell-2","inline":false,"source":"\r\nfoo = await d3.json(url_drm) // 'https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us')\r\n\r\nfoo_periods = foo.properties.periods\r\n\r\n// foo_periods[0]\r\n\r\naq.from(foo_periods).view()\r\n\r\ntemp_df = aq.from(foo_periods)\r\n\r\nmy_df = temp_df\r\n  .derive({  startTime: d =>  op.parse_date(d.startTime) })\r\n  \r\nmy_dew_df = my_df\r\n  .derive({\r\n    dewpoint_F: (d) => d.dewpoint.value\r\n  })\r\n  .derive({\r\n    dewpoint_F: d => (d.dewpoint_F * (9 / 5) + 32)\r\n  })\r\n  .derive({\r\n    humidity_rel: d => d.relativeHumidity.value\r\n  })\r\n  .derive({\r\n    heat_index: d => -42.379 + \r\n    (2.04901523 * d.temperature) + \r\n    (10.14333127 * d.humidity_rel) -\r\n    (.22475541 * d.temperature * d.humidity_rel) - \r\n    (.00683783 * d.temperature * d.temperature) - \r\n    (.05481717 * d.humidity_rel * d.humidity_rel) + \r\n    (.00122874 * d.temperature * d.temperature * d.humidity_rel) + \r\n    (.00085282 * d.temperature * d.humidity_rel * d.humidity_rel) - \r\n    (.00000199 * d.temperature * d.temperature * d.humidity_rel * d.humidity_rel)\r\n  })\r\n  .derive({\r\n    heat_index: d => op.round(d.heat_index, 0)\r\n  })\r\n  .derive({\r\n    rain_probability: d => d.probabilityOfPrecipitation.value\r\n  })\r\n  .derive({\r\n    day_n: d => op.dayofweek(d.startTime)\r\n  })\r\n  .derive({\r\n    day_string: row => {\r\n      if (row.day_n == 0) return \"Sun\";\r\n      if (row.day_n == 1) return \"Mon\";  \r\n      if (row.day_n == 2) return \"Tues\";\r\n      if (row.day_n == 3) return \"Wed\";\r\n      if (row.day_n == 4) return \"Thurs\";  \r\n      if (row.day_n == 5) return \"Fri\";\r\n      if (row.day_n == 6) return \"Sat\"\r\n   }\r\n  })\r\n  .derive({\r\n    month: d => op.month(d.startTime) + 1\r\n  })\r\n  .derive({\r\n    date_month: d => d.date(d.startTime)\r\n  })\r\n  .derive({\r\n    date_month: d => d.date(d.startTime)\r\n  })\r\n  .derive({\r\n    date_string: d => d.day_string + \", \" + d.month + \"/\" + d.date_month\r\n  })\r\n\r\n\r\n// HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - .22475541 * T * RH - .00683783 * T * T - .05481717 * RH * RH + .00122874 * T * T * RH + .00085282 * T * RH * RH - .00000199 * T * T * RH * RH\r\n  \r\nawait my_dew_df.view()\r\n"},{"methodName":"interpret","cellName":"ojs-cell-3","inline":false,"source":"\r\nPlot.plot({\r\n  marks: [\r\n    Plot.ruleY([0]),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"temperature\",\r\n      stroke: \"orange\"\r\n    }),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"dewpoint_F\", \r\n      stroke: \"green\",\r\n    }),\r\n    Plot.text(my_dew_df,  Plot.selectMaxX({\r\n      x: \"startTime\",\r\n      y: \"dewpoint_F\",\r\n      text: [\"Humidity\"],\r\n      lineAnchor: \"bottom\",\r\n      fill: [\"green\"],\r\n      //dy: 100,\r\n      //dx: 100,\r\n      fontSize: 24\r\n    })),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"heat_index\", \r\n      stroke: \"red\"\r\n    }),\r\n  ]\r\n})\r\n\r\nPlot.plot({\r\n  marks: [\r\n    Plot.ruleY([0]),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"temperature\",\r\n      stroke: \"orange\"\r\n    }),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"dewpoint_F\", \r\n      stroke: \"green\"\r\n    }),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"heat_index\", \r\n      stroke: \"red\"\r\n    }),\r\n    Plot.barY(my_dew_df, {\r\n      x: 'startTime',\r\n      y: 'rain_probability',\r\n      fill: \"lightblue\"\r\n    })\r\n  ]\r\n})\r\n\r\nPlot.plot({\r\n  marks: [\r\n    Plot.ruleY([0]),\r\n    Plot.barY(my_dew_df, {\r\n      x: 'startTime',\r\n      y: 'rain_probability',\r\n      fill: \"lightblue\"\r\n    }),\r\n  ]\r\n})\r\n"},{"methodName":"interpret","cellName":"ojs-cell-4","inline":false,"source":"\r\nPlot.plot({\r\n  marks: [\r\n    Plot.barY(alphabet, {\r\n      x: \"letter\",\r\n      y: \"frequency\"\r\n    }),\r\n    Plot.barY(alphabet, {\r\n      filter: (d) => /[aeiouy]/i.test(d.letter),\r\n      x: \"letter\",\r\n      y: \"frequency\",\r\n      stroke: \"red\",\r\n      strokeWidth: 3,\r\n      inset: -3 // expand the bars\r\n    })\r\n  ]\r\n})\r\n\r\nmy_letters = alphabet\r\naq.from(my_letters).view()\r\n\r\n\r\nPlot.plot({\r\n  marks: [\r\n    Plot.ruleY([0]),\r\n    Plot.lineY(my_dew_df, {\r\n      x: \"startTime\",\r\n      y: \"dewpoint_F\", \r\n      stroke: \"green\",\r\n    }),\r\n    Plot.text(my_dew_df,  Plot.selectFirst({\r\n      x: \"startTime\",\r\n      y: \"dewpoint_F\",\r\n      text: [\"Humidity\"],\r\n      lineAnchor: \"bottom\",\r\n      fill: [\"green\"],\r\n      //dy: 100,\r\n      //dx: 156,\r\n      fontSize: 24\r\n    })),\r\n    Plot.text(my_dew_df,  Plot.selectMaxX({\r\n      x: \"startTime\",\r\n      y: \"dewpoint_F\",\r\n      text: [\"Humidity\"],\r\n      lineAnchor: \"top\",\r\n      stroke: \"Red\",\r\n      frameAnchor: \"bottom\",\r\n//      dy: 10,\r\n//      dx: 156,\r\n      fontSize: 24\r\n    }))\r\n  ]\r\n})\r\n\r\nmy_dew_df.numRows()\r\n\r\nmy_weather_long_df\r\n  .view()\r\n  \r\n\r\nmy_weather_long_df = my_dew_df\r\n  .select(\"number\", \"startTime\", \"temperature\", \"dewpoint_F\", \"heat_index\", \"rain_probability\", \"day_n\", \"day_string\", \"month\", \"date_string\")\r\n  .fold(['temperature', 'dewpoint_F', 'heat_index'], // 'rain_probability', \r\n    {as: ['measurement', 'value']})\r\n\r\n\r\nPlot.plot({\r\n  color: {legend: true, range: [\"forestgreen\", \"firebrick\", \"darkorange\"]}, \r\n  //x: {domain: [op.parse_date('2023-07-27T13:00:00.000'), op.parse_date('2023-08-05')]},\r\n  marks: [\r\n    Plot.ruleY([0]),\r\n    Plot.lineY(my_weather_long_df, {\r\n      x: \"startTime\",\r\n      y: \"value\", \r\n      z: \"measurement\",\r\n      stroke: \"measurement\",\r\n      label: \"measurement\",\r\n    }),\r\n    Plot.text(my_weather_long_df, \r\n      Plot.selectMinY({\r\n        x: \"startTime\",\r\n        y: \"value\",\r\n        z: \"measurement\",\r\n        text: \"measurement\",\r\n        textAnchor: \"start\",\r\n        fill: \"measurement\",\r\n        stroke: \"black\",\r\n        //fillOpacity: 0.8,\r\n        //stokeOpacity: 0.8,\r\n        dy: 5,\r\n        dx: -5,\r\n        fontSize: 18\r\n      })),\r\n  ]\r\n})\r\n"},{"methodName":"interpret","cellName":"ojs-cell-5","inline":false,"source":"my_dates = my_weather_long_df\r\n .orderby('startTime')\r\n .rollup({my_distinct: op.array_agg_distinct('date_string')})\r\n  \r\nmy_weather_long_df\r\n .orderby('startTime')\r\n .rollup({my_distinct: op.array_agg_distinct('date_string')})\r\n .view()\r\n \r\nmy_weather_long_df\r\n// .orderby('startTime')\r\n .rollup({my_distinct: op.array_agg_distinct('date_string')})\r\n .view()\r\n\r\n\r\nmy_dates\r\n\r\n// viewof date_one_1 = Inputs.select(my_dates)\r\n\r\n// viewof date_one = Inputs.select(aq.escape(d => d.my_dates))\r\n"},{"methodName":"interpret","cellName":"ojs-cell-6","inline":false,"source":"my_weather_long_df\r\n  .derive({ unq: op.distinct('date_string')})\r\n  .view()\r\n"},{"methodName":"interpret","cellName":"ojs-cell-7","inline":false,"source":"stateShapes.features.map(d => d.properties.name).sort()\r\n\r\naq.from(stateShapes.features).view()\r\n\r\n"},{"methodName":"interpret","cellName":"ojs-cell-8","inline":false,"source":"import { aq, op } from '@uwdata/arquero'\r\nimport { stateShapes } from '@danielkerrigan/synchronized-map-input'\r\n// import { fromGeoJSON } from '@aris-data/arquero'\r\n// import { fromJSON } from \"arquero\";\r\n"}]}
 </script>
 <script type="module">
 if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }

@@ -19,16 +19,14 @@ my_js_df.view()
 // properties.view()
 ```
 
-
 ### Using the d3.json method
 
-Heat Index
-https://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml
+Heat Index https://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml
 
-HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - .22475541 * T * RH - .00683783 * T * T - .05481717 * RH * RH + .00122874 * T * T * RH + .00085282 * T * RH * RH - .00000199 * T * T * RH * RH
-
+HI = -42.379 + 2.04901523 \* T + 10.14333127 \* RH - .22475541 \* T \* RH - .00683783 \* T \* T - .05481717 \* RH \* RH + .00122874 \* T \* T \* RH + .00085282 \* T \* RH \* RH - .00000199 \* T \* T \* RH \* RH
 
 ```{ojs}
+
 foo = await d3.json(url_drm) // 'https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us')
 
 foo_periods = foo.properties.periods
@@ -69,27 +67,38 @@ my_dew_df = my_df
   .derive({
     rain_probability: d => d.probabilityOfPrecipitation.value
   })
+  .derive({
+    day_n: d => op.dayofweek(d.startTime)
+  })
+  .derive({
+    day_string: row => {
+      if (row.day_n == 0) return "Sun";
+      if (row.day_n == 1) return "Mon";  
+      if (row.day_n == 2) return "Tues";
+      if (row.day_n == 3) return "Wed";
+      if (row.day_n == 4) return "Thurs";  
+      if (row.day_n == 5) return "Fri";
+      if (row.day_n == 6) return "Sat"
+   }
+  })
+  .derive({
+    month: d => op.month(d.startTime) + 1
+  })
+  .derive({
+    date_month: d => d.date(d.startTime)
+  })
+  .derive({
+    date_month: d => d.date(d.startTime)
+  })
+  .derive({
+    date_string: d => d.day_string + ", " + d.month + "/" + d.date_month
+  })
 
 
 // HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - .22475541 * T * RH - .00683783 * T * T - .05481717 * RH * RH + .00122874 * T * T * RH + .00085282 * T * RH * RH - .00000199 * T * T * RH * RH
   
 await my_dew_df.view()
-
-// dewpoint = foo.properties.periods.dewpoint
-// dewpoint 
-
-
-
 ```
-
-{"unitCode": "wmoUnit:degC","value": 19.444444444444443}
-.derive({
-    dewpoint_value: (d) => d.dewpoint.value,
-  })
-  
-{"relativeHumidity": { "unitCode": "wmoUnit:percent", "value": 52}}
-
-"probabilityOfPrecipitation": {"unitCode": "wmoUnit:percent", "value": 6 }
 
 ### viz
 
@@ -108,18 +117,23 @@ Plot.plot({
     Plot.lineY(my_dew_df, {
       x: "startTime",
       y: "dewpoint_F", 
-      stroke: "green"
+      stroke: "green",
     }),
+    Plot.text(my_dew_df,  Plot.selectMaxX({
+      x: "startTime",
+      y: "dewpoint_F",
+      text: ["Humidity"],
+      lineAnchor: "bottom",
+      fill: ["green"],
+      //dy: 100,
+      //dx: 100,
+      fontSize: 24
+    })),
     Plot.lineY(my_dew_df, {
       x: "startTime",
       y: "heat_index", 
       stroke: "red"
     }),
-//    Plot.barY(my_dew_df, {
-//      x: 'startTime',
-//      y: 'rain_probability',
-//      fill: "lightblue"
-//    })
   ]
 })
 
@@ -161,17 +175,149 @@ Plot.plot({
 })
 ```
 
+## goo
 
+```{ojs}
+
+Plot.plot({
+  marks: [
+    Plot.barY(alphabet, {
+      x: "letter",
+      y: "frequency"
+    }),
+    Plot.barY(alphabet, {
+      filter: (d) => /[aeiouy]/i.test(d.letter),
+      x: "letter",
+      y: "frequency",
+      stroke: "red",
+      strokeWidth: 3,
+      inset: -3 // expand the bars
+    })
+  ]
+})
+
+my_letters = alphabet
+aq.from(my_letters).view()
+
+
+Plot.plot({
+  marks: [
+    Plot.ruleY([0]),
+    Plot.lineY(my_dew_df, {
+      x: "startTime",
+      y: "dewpoint_F", 
+      stroke: "green",
+    }),
+    Plot.text(my_dew_df,  Plot.selectFirst({
+      x: "startTime",
+      y: "dewpoint_F",
+      text: ["Humidity"],
+      lineAnchor: "bottom",
+      fill: ["green"],
+      //dy: 100,
+      //dx: 156,
+      fontSize: 24
+    })),
+    Plot.text(my_dew_df,  Plot.selectMaxX({
+      x: "startTime",
+      y: "dewpoint_F",
+      text: ["Humidity"],
+      lineAnchor: "top",
+      stroke: "Red",
+      frameAnchor: "bottom",
+//      dy: 10,
+//      dx: 156,
+      fontSize: 24
+    }))
+  ]
+})
+
+my_dew_df.numRows()
+
+my_weather_long_df
+  .view()
+  
+
+my_weather_long_df = my_dew_df
+  .select("number", "startTime", "temperature", "dewpoint_F", "heat_index", "rain_probability", "day_n", "day_string", "month", "date_string")
+  .fold(['temperature', 'dewpoint_F', 'heat_index'], // 'rain_probability', 
+    {as: ['measurement', 'value']})
+
+
+Plot.plot({
+  color: {legend: true, range: ["forestgreen", "firebrick", "darkorange"]}, 
+  //x: {domain: [op.parse_date('2023-07-27T13:00:00.000'), op.parse_date('2023-08-05')]},
+  marks: [
+    Plot.ruleY([0]),
+    Plot.lineY(my_weather_long_df, {
+      x: "startTime",
+      y: "value", 
+      z: "measurement",
+      stroke: "measurement",
+      label: "measurement",
+    }),
+    Plot.text(my_weather_long_df, 
+      Plot.selectMinY({
+        x: "startTime",
+        y: "value",
+        z: "measurement",
+        text: "measurement",
+        textAnchor: "start",
+        fill: "measurement",
+        stroke: "black",
+        //fillOpacity: 0.8,
+        //stokeOpacity: 0.8,
+        dy: 5,
+        dx: -5,
+        fontSize: 18
+      })),
+  ]
+})
+```
+
+## distinct
+
+```{ojs}
+my_dates = my_weather_long_df
+ .orderby('startTime')
+ .rollup({my_distinct: op.array_agg_distinct('date_string')})
+  
+my_weather_long_df
+ .orderby('startTime')
+ .rollup({my_distinct: op.array_agg_distinct('date_string')})
+ .view()
+ 
+my_weather_long_df
+// .orderby('startTime')
+ .rollup({my_distinct: op.array_agg_distinct('date_string')})
+ .view()
+
+
+my_dates
+
+// viewof date_one_1 = Inputs.select(my_dates)
+
+// viewof date_one = Inputs.select(aq.escape(d => d.my_dates))
+```
+
+```{ojs}
+my_weather_long_df
+  .derive({ unq: op.distinct('date_string')})
+  .view()
+```
+
+```{ojs}
+stateShapes.features.map(d => d.properties.name).sort()
+
+aq.from(stateShapes.features).view()
+
+```
 
 ## Import arquero libraries
 
 ```{ojs}
 import { aq, op } from '@uwdata/arquero'
-import { fromGeoJSON } from '@aris-data/arquero'
+import { stateShapes } from '@danielkerrigan/synchronized-map-input'
+// import { fromGeoJSON } from '@aris-data/arquero'
 // import { fromJSON } from "arquero";
-// import { dataframe } from "arquero/dataframe";
-// import { Observable } from "@mblsha/rxjs";
-
-// import {d3-time-format}
-// d3 = require("d3@6")
 ```
