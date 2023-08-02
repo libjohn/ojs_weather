@@ -61,15 +61,17 @@ Plot.plot({
       strokeWidth: 2,
       title: "measurement"
     }),
-//    Plot.tip(
-//      my_filtered_weather,
-//      Plot.pointer({
-//        x: "startTime",
-//        y: "value",
-//        stroke: "measurement",
-//        channels: { measurement: "measurement"},
-//      })
-//    ),
+//    
+    Plot.tip(
+      my_filtered_weather,
+      Plot.pointer({
+        x: "startTime",
+        y: "value",
+        stroke: "measurement",
+        channels: { measurement: "measurement"},
+      })
+    ),
+//
     Plot.ruleY([0])
   ]
 })
@@ -136,8 +138,8 @@ my_weather_df   = await aq.from(my_json_weather.properties.periods)
 ## Import arquero libraries
 
 ```{ojs}
-import { aq, op } from '@uwdata/arquero'
-import { stateShapes } from '@danielkerrigan/synchronized-map-input'
-// import { fromGeoJSON } from '@aris-data/arquero'
-// import { fromJSON } from "arquero";
+// import { aq, op } from '@uwdata/arquero'
+aq = import('https://esm.run/arquero') 
+op = import('https://esm.run/arquero') 
+Plot = import("https://esm.run/@observablehq/plot")
 ```
