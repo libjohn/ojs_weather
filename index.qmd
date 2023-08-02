@@ -1,8 +1,21 @@
 ---
-title: "JSON Weather .gov API"
-format: html
+title: "Observable via Quarto"
+subtitle: "JSON data via Weather.gov API"
 editor: visual
+
+format: 
+  html:
+    df-print: paged
+    toc: true
+    warning: false
+    messages: false
+    code-summary: "Show the code"
+    code-tools: true
 ---
+
+```{ojs}
+Plot.version
+```
 
 ```{ojs}
 //| echo: false
@@ -13,14 +26,14 @@ viewof url = Inputs.radio(
       "https://api.weather.gov/gridpoints/RAH/64,68/forecast/hourly?units=us"
     ],
     [
-      "location 2",
+      "Badgerville",
       "https://api.weather.gov/gridpoints/GRB/68,20/forecast/hourly?units=us"
     ]
   ]),
   {
     value:
       "https://api.weather.gov/gridpoints/GRB/68,20/forecast/hourly?units=us",
-    label: "Size"
+    label: "Location"
   }
 )
 
@@ -32,7 +45,8 @@ date_range = d3.extent(my_weather_df, d => d.startTime)
 ```
 
 ```{ojs}
-//| echo: false
+//| code-fold: true
+// echo: false
 
 Plot.plot({
   color: { range: ["forestgreen", "firebrick", "lightblue", "darkorange"] },
@@ -61,9 +75,9 @@ Plot.plot({
 })
 ```
 
-what \## testing
-
 ```{ojs}
+//| eval: false
+//| echo: false
 my_filtered_weather.view()
 ```
 
