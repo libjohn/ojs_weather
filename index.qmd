@@ -14,7 +14,18 @@ format:
 ---
 
 ```{ojs}
-Plot.version
+//| eval: false
+//| echo: false
+
+Plot.version  // to get the version of Plot from run via Quarto's standard installation
+// See Bottom for the alternative of loading a library pagckage
+// Plot = import("https://esm.run/@observablehq/plot")
+//
+//  Weather.gov API documentation
+// - https://weather-gov.github.io/api/
+// - https://www.weather.gov/documentation/services-web-api my x,y coords: 
+// - https://api.weather.gov/points/36,-78.9 # get office and x and y my forcast: \
+// - https://api.weather.gov/gridpoints/RAH/64,66/forecast
 ```
 
 ```{ojs}
@@ -46,7 +57,6 @@ date_range = d3.extent(my_weather_df, d => d.startTime)
 
 ```{ojs}
 //| code-fold: true
-// echo: false
 
 Plot.plot({
   color: { range: ["forestgreen", "firebrick", "lightblue", "darkorange"] },
@@ -59,9 +69,8 @@ Plot.plot({
       z: "measurement",
       stroke: "measurement",
       strokeWidth: 2,
-      title: "measurement"
+      // title: "measurement"
     }),
-//    
     Plot.tip(
       my_filtered_weather,
       Plot.pointer({
@@ -71,7 +80,6 @@ Plot.plot({
         channels: { measurement: "measurement"},
       })
     ),
-//
     Plot.ruleY([0])
   ]
 })
@@ -83,7 +91,7 @@ Plot.plot({
 my_filtered_weather.view()
 ```
 
-## wrangle data
+## Wrangle data
 
 Filter data by date, based on drop-down boxes
 
@@ -138,8 +146,11 @@ my_weather_df   = await aq.from(my_json_weather.properties.periods)
 ## Import arquero libraries
 
 ```{ojs}
+// import { aq, all, desc, table } from '@uwdata/arquero'
 // import { aq, op } from '@uwdata/arquero'
-aq = import('https://esm.run/arquero') 
+import { aq } from '@uwdata/arquero'
+// aq = import('https://esm.run/arquero') 
 op = import('https://esm.run/arquero') 
 Plot = import("https://esm.run/@observablehq/plot")
 ```
+

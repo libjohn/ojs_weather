@@ -1,0 +1,4 @@
+- source: index.qmd
+  netlify:
+    - id: ceb1b678-cf84-4de0-b54c-e774de47ed9d
+      url: 'https://radiant-dusk-9695f6.netlify.app'
