@@ -86,8 +86,36 @@ Plot.plot({
 ```
 
 ```{ojs}
+//|echo: false
+my_temp = my_filtered_weather
+  .filter(d => d.measurement === "temperature")
+  .select("value")
+  .slice(0, 1)
+  .object()
+  .value
+  
+my_dew = my_filtered_weather
+  .filter(d => d.measurement === "dewpoint_F")
+  .select("value")
+  .slice(0, 1)
+  .object()
+  .value
+
+  
+  my_feels = my_filtered_weather
+  .filter(d => d.measurement === "heat_index")
+  .select("value")
+  .slice(0, 1)
+  .object()
+  .value
+```
+
+**Current** temperature is \${my_temp} F \| Dewpoint is \${my_dew} \| Feels like \${my_feels}
+
+```{ojs}
 //| eval: false
 //| echo: false
+
 my_filtered_weather.view()
 ```
 
@@ -146,11 +174,7 @@ my_weather_df   = await aq.from(my_json_weather.properties.periods)
 ## Import arquero libraries
 
 ```{ojs}
-// import { aq, all, desc, table } from '@uwdata/arquero'
-// import { aq, op } from '@uwdata/arquero'
-import { aq } from '@uwdata/arquero'
-// aq = import('https://esm.run/arquero') 
+import { aq, view } from '@uwdata/arquero'
 op = import('https://esm.run/arquero') 
 Plot = import("https://esm.run/@observablehq/plot")
 ```
-
