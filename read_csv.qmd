@@ -1,0 +1,40 @@
+---
+title: "Untitled"
+format: html
+editor: source
+---
+
+## Standard OJS
+
+```{ojs}
+mydata = FileAttachment('data/penguins.csv').csv({typed: true})
+
+Inputs.table(mydata)
+```
+
+
+## Via Arquero
+
+Arquero was inspired by several key concepts in {tidyverse} and requires 
+https://idl.uw.edu/arquero/api/verbs.html
+
+
+```{ojs}
+pengins_arq_df = await aq.loadCSV("data/penguins.csv")
+pengins_arq_df
+  .select('species', 'island')
+  .view()
+```
+
+
+
+```{ojs}
+//| label: load Arqero libraries
+import { aq, view } from '@uwdata/arquero'
+op = import('https://esm.run/arquero') 
+Plot = import("https://esm.run/@observablehq/plot")  // Plot is like ggplot2
+// import { invalidate } from "@observablehq/runtime";
+```
+
+
+

@@ -1,0 +1,26 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+starwars |>
+  select(name, mass, gender, sex) |> 
+  pivot_longer(-c(name, mass), names_to = "presentation") |> 
+  group_by(name) |> 
+  mutate(drop = if_else(mass > 500 & value == "masculine", TRUE, FALSE) ) |> 
+  mutate(drop2 = sum(drop)) |> 
+  mutate(drop2 = if_else(is.na(drop2), 0, drop2)) |> 
+  filter(drop2 < 1) |> 
+  select(-drop, -drop2) |> 
+  ungroup() |> 
+  pivot_wider(names_from = presentation, values_from = value)
+  
+starwars |> 
+  filter(mass > 500)
+```
